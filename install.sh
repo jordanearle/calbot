@@ -1,4 +1,8 @@
 #!/bin/bash
+# Calbot Installer
+# Usage: curl -fsSL https://raw.githubusercontent.com/jordanearle/calbot/main/install.sh | bash
+#
+# Or run locally: ./install.sh
 
 # Cal's colors
 CAL_TEAL='\033[38;2;84;187;183m'
@@ -206,9 +210,8 @@ main() {
     # Step 7: Install Calbot
     step_start "Installing Calbot"
 
-    # For local development, link the package
-    # In production, this would be: npm install -g calbot
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    # Check if running from within the repo (local dev) or remotely (curl install)
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
 
     if [ -f "$SCRIPT_DIR/package.json" ]; then
         # Local development - link the package
@@ -218,9 +221,34 @@ main() {
         npm link > /dev/null 2>&1
         step_done "Installing Calbot ${DIM}(linked locally)${NC}"
     else
-        # Production - install from npm (when published)
-        # npm install -g calbot > /dev/null 2>&1
-        step_done "Installing Calbot"
+        # Remote install - clone and install
+        CALBOT_REPO="https://github.com/jordanearle/calbot.git"
+        CALBOT_DIR="$HOME/.calbot-cli"
+
+        # Remove old installation if exists
+        rm -rf "$CALBOT_DIR" 2>/dev/null
+
+        # Clone the repo
+        git clone --depth 1 "$CALBOT_REPO" "$CALBOT_DIR" > /dev/null 2>&1
+        if [ $? -ne 0 ]; then
+            step_fail "Installing Calbot"
+            cal_error "Failed to download Calbot. Check your internet connection."
+            exit 1
+        fi
+
+        # Install and link
+        cd "$CALBOT_DIR"
+        npm install > /dev/null 2>&1
+        npm run build > /dev/null 2>&1
+        npm link > /dev/null 2>&1
+
+        if [ $? -eq 0 ]; then
+            step_done "Installing Calbot"
+        else
+            step_fail "Installing Calbot"
+            cal_error "Failed to install Calbot dependencies."
+            exit 1
+        fi
     fi
 
     echo ""
