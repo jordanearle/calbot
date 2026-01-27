@@ -22,16 +22,97 @@ import { launchPrototypeServer } from '../utils/running.js';
 
 const TEMPLATE_ID = 'birdie';
 
-const CLAUDE_README = `# Claude Code + Calbot
+const CLAUDE_MD = `# Calbot Prototype
 
-This project is already running in development mode via Calbot.
+This is a Next.js prototype managed by Calbot. The dev server is already running with hot reload.
 
-- Do **not** run \`npm run dev\` again. The dev server is active with hot reload enabled.
-- Make edits directly in this folder or by using Claude Code—changes appear instantly in the browser.
-- The live preview URL and runtime details live in \`.calbot/state.json\`.
-- Focus on editing files only. The Calbot runner keeps the server healthy.
+## Important Guidelines
 
-Need help? Open Claude Code in this folder and describe what you want to change in natural language.`;
+### Where to Make Changes
+
+**DO edit:**
+- \`src/app/page.tsx\` - The main page content
+- \`src/app/*/page.tsx\` - Any route pages you create
+- Files in \`src/components/\` (except \`src/components/layout/\` and \`src/components/ui/\`)
+
+**DO NOT edit:**
+- \`src/components/layout/TopNav.tsx\` - The top navigation bar
+- \`src/components/layout/SideNav.tsx\` - The side navigation
+- \`src/app/layout.tsx\` - The root layout structure
+- \`src/components/ui/*\` - The shadcn/ui primitives
+
+The navigation and layout are intentionally locked to maintain design consistency. Focus all changes on the content area inside the main section.
+
+### Using Components
+
+Always use shadcn/ui components from \`@/components/ui/\`. Common ones already installed:
+- \`Button\` - \`import { Button } from "@/components/ui/button"\`
+- \`Card\`, \`CardHeader\`, \`CardTitle\`, \`CardDescription\`, \`CardContent\` - \`import { ... } from "@/components/ui/card"\`
+- \`Avatar\`, \`AvatarImage\`, \`AvatarFallback\` - \`import { ... } from "@/components/ui/avatar"\`
+
+To add more shadcn/ui components, run: \`npx shadcn@latest add <component-name>\`
+
+### Birdie Design System Colors
+
+These colors are defined in \`src/app/globals.css\` using Tailwind v4's \`@theme\` directive. Use these Tailwind classes:
+
+**Brand colors:**
+| Class | Color | Hex |
+|-------|-------|-----|
+| \`bg-birdie-primary\` | Teal | #54BDB8 |
+| \`text-birdie-primary\` | Teal | #54BDB8 |
+| \`bg-birdie-primary-light\` | Light teal | #A6FAE8 |
+| \`bg-birdie-nav\` | Navy | rgb(21, 41, 81) |
+
+**Status colors (for badges, alerts, cards):**
+| Status | Background | Text | Border |
+|--------|------------|------|--------|
+| Green | \`bg-green-bg\` #e6f7ef | \`text-green-text\` #072c1e | \`border-green-border\` #acdec8 |
+| Blue | \`bg-blue-bg\` #ebf3ff | \`text-blue-text\` #0f2757 | \`border-blue-border\` #c1d6ff |
+| Yellow | \`bg-yellow-bg\` #fff0d1 | \`text-yellow-text\` #3d1f00 | \`border-yellow-border\` #f0ce99 |
+| Red | \`bg-red-bg\` #feecef | \`text-red-text\` #811316 | \`border-red-border\` #ffced6 |
+| Purple | \`bg-purple-bg\` #f6ebfb | \`text-purple-text\` #390042 | \`border-purple-border\` #e3c5ed |
+| Orange | \`bg-orange-bg\` #feede2 | \`text-orange-text\` #5d1d14 | \`border-orange-border\` #fdceaf |
+| Cyan | \`bg-cyan-bg\` #def7f9 | \`text-cyan-text\` #0b323c | \`border-cyan-border\` #9ddde7 |
+
+**Neutral colors:**
+| Class | Use | Hex |
+|-------|-----|-----|
+| \`bg-background\` | Page background | #ffffff |
+| \`bg-background-2\` | Secondary/card backgrounds | #f3f4f7 |
+| \`bg-neutral-bg\` | Muted UI elements | #e3e7ed |
+| \`text-neutral-text\` | Body text | #606876 |
+| \`text-neutral-text-dark\` | Headings, emphasis | #151619 |
+| \`border-neutral-border\` | Standard borders | #c5c9d3 |
+
+**High contrast variants (for icons, links on colored backgrounds):**
+- \`text-green-high-contrast\` #006643
+- \`text-blue-high-contrast\` #1847a5
+- \`text-red-high-contrast\` #c20a1d
+
+### Best Practices
+
+1. **Keep it simple** - This is a prototype, not production code. Favor clarity over abstraction.
+2. **Use existing patterns** - Look at \`src/app/page.tsx\` for examples of how to structure content.
+3. **Responsive by default** - Use Tailwind's responsive prefixes (\`sm:\`, \`md:\`, \`lg:\`) when needed.
+4. **Don't start the dev server** - It's already running. Just edit files and changes appear automatically.
+
+### Project Structure
+
+\`\`\`
+src/
+├── app/
+│   ├── layout.tsx      # DO NOT EDIT - Root layout
+│   ├── page.tsx        # EDIT THIS - Main page
+│   ├── globals.css     # Design tokens (reference only)
+│   └── [routes]/       # Add new pages here
+├── components/
+│   ├── layout/         # DO NOT EDIT - Navigation components
+│   └── ui/             # DO NOT EDIT - shadcn/ui primitives
+└── lib/
+    └── utils.ts        # Utility functions (cn helper)
+\`\`\`
+`;
 
 interface CalbotState {
   projectId: string;
@@ -194,7 +275,7 @@ export const NewCommand: React.FC<NewCommandProps> = ({ projectName, verbose }) 
 
         calbotStatePath = join(calbotMetaDir, 'state.json');
         calbotLogPath = join(calbotMetaDir, 'log.txt');
-        writeFileSync(join(calbotMetaDir, 'README_FOR_CLAUDE.md'), CLAUDE_README);
+        writeFileSync(join(projPath, 'CLAUDE.md'), CLAUDE_MD);
         const notesPath = join(calbotMetaDir, 'notes.md');
         if (!existsSync(notesPath)) {
           writeFileSync(notesPath, '');
