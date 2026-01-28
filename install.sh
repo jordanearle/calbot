@@ -128,12 +128,14 @@ main() {
     if command_exists brew; then
         step_skip "Homebrew"
     else
-        step_start "Installing Homebrew"
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" > /dev/null 2>&1
+        echo ""
+        cal_say "I need to install Homebrew first. You may need to enter your password."
+        echo ""
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         if [ $? -eq 0 ]; then
             # Add Homebrew to PATH for this session
             eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null
-            step_done "Installing Homebrew"
+            step_done "Homebrew"
         else
             step_fail "Installing Homebrew"
             cal_error "Homebrew installation failed. Please install it manually from https://brew.sh"
