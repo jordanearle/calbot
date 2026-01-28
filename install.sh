@@ -44,7 +44,7 @@ print_calbot() {
 ▝▚▄▄▖▐▌ ▐▌▐▙▄▄▖▐▙▄▞▘▝▚▄▞▘ █
 EOF
     echo -e "${NC}"
-    echo -e "${DIM}Birdie's friendly prototyping assistant${NC}"
+    echo -e "${DIM}Birdie's friendly prototyping assistant v1.1${NC}"
     echo ""
 }
 
@@ -131,7 +131,7 @@ main() {
         echo ""
         cal_say "I need to install Homebrew first. You may need to enter your password."
         echo ""
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         if [ $? -eq 0 ]; then
             # Add Homebrew to PATH for this session
             eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null
