@@ -8,7 +8,7 @@ import { NewCommand } from './commands/new.js';
 import { HomeCommand } from './commands/home.js';
 import { Intro } from './components/Intro.js';
 import { setVerbose } from './utils/shell.js';
-import { Cal, CAL_ORANGE, CAL_TEAL } from './components/Cal.js';
+import { Cal, CalFace, CAL_ORANGE, CAL_TEAL } from './components/Cal.js';
 
 type AppPhase = 'home' | 'name-prompt' | 'creating';
 
@@ -38,7 +38,7 @@ const App: React.FC = () => {
       <Box flexDirection="column" padding={1}>
         {/* Header */}
         <Box marginBottom={1}>
-          <Text color={CAL_ORANGE} bold>{'(•ᴗ•)'}</Text>
+          <Box><CalFace color={CAL_ORANGE} /></Box>
           <Text color={CAL_TEAL} bold> calbot</Text>
           <Text dimColor> — new prototype</Text>
         </Box>

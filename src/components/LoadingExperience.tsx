@@ -2,6 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { Text, Box, Newline } from 'ink';
 import { CAL_TEAL, CAL_ORANGE } from './Cal.js';
 
+// Render a face string with orange beak (middle character)
+const AnimatedFace: React.FC<{ face: string; color: string }> = ({ face, color }) => {
+  // Face format: (XYZ) where X=left eye, Y=beak, Z=right eye
+  // Extract parts: ( + leftEye + beak + rightEye + )
+  const left = face.slice(0, 2);   // "(" + left eye
+  const beak = face.slice(2, -2);  // middle character(s)
+  const right = face.slice(-2);    // right eye + ")"
+
+  return (
+    <>
+      <Text color={color}>{left}</Text>
+      <Text color={CAL_ORANGE}>{beak}</Text>
+      <Text color={color}>{right}</Text>
+    </>
+  );
+};
+
 // Animated Cal faces
 const calFrames = [
   '(•ᴗ•)',
@@ -153,7 +170,7 @@ export const LoadingExperience: React.FC<LoadingExperienceProps> = ({
     <Box flexDirection="column" paddingX={2}>
       {/* Main loading indicator */}
       <Box marginBottom={1}>
-        <Text color={CAL_TEAL}>{calThinkingFrames[frame]}</Text>
+        <AnimatedFace face={calThinkingFrames[frame]} color={CAL_TEAL} />
         <Text color={CAL_TEAL}> cal{'>'} </Text>
         <Text>{currentStep}</Text>
         <Text dimColor>{dots}</Text>

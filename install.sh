@@ -50,19 +50,19 @@ EOF
 
 # Cal says something
 cal_say() {
-    echo -e "${CAL_TEAL}(•ᴗ•) cal>${NC} $1"
+    echo -e "${CAL_TEAL}(•${CAL_ORANGE}ᴗ${CAL_TEAL}•) cal>${NC} $1"
 }
 
 cal_think() {
-    echo -e "${CAL_TEAL}(•.•) cal>${NC} $1"
+    echo -e "${CAL_TEAL}(•${CAL_ORANGE}.${CAL_TEAL}•) cal>${NC} $1"
 }
 
 cal_success() {
-    echo -e "${GREEN}(•ᴗ•) cal>${NC} $1"
+    echo -e "${GREEN}(•${CAL_ORANGE}ᴗ${GREEN}•) cal>${NC} $1"
 }
 
 cal_error() {
-    echo -e "${RED}(•︵•) cal>${NC} $1"
+    echo -e "${RED}(•${CAL_ORANGE}︵${RED}•) cal>${NC} $1"
 }
 
 # Check if a command exists

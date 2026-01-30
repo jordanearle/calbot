@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Text, Box, Newline, useApp, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
-import { Cal, CAL_TEAL, CAL_ORANGE } from '../components/Cal.js';
+import { Cal, CalFace, CAL_TEAL, CAL_ORANGE } from '../components/Cal.js';
 import { Intro } from '../components/Intro.js';
 import { getProjects, getCalbotDir, runCommand, findAvailablePort } from '../utils/shell.js';
 import { existsSync, readFileSync } from 'fs';
@@ -138,9 +138,9 @@ export const HomeCommand: React.FC<HomeProps> = ({ onCreateNew }) => {
         break;
 
       case 'claude':
-        setActionMessage(`Opening Claude Code for ${selectedProject.name}...`);
-        await openClaudeForPath(selectedProject.path, selectedProject.name);
-        setActionMessage('Claude Code session opened in Terminal!');
+        setActionMessage(`Copying path for ${selectedProject.name}...`);
+        await copyToClipboard(selectedProject.path);
+        setActionMessage('Path copied! Open your terminal and run: cd <paste> && claude');
         break;
 
       case 'vscode':
@@ -162,9 +162,9 @@ export const HomeCommand: React.FC<HomeProps> = ({ onCreateNew }) => {
     setPhase('running');
 
     if (action === 'edit') {
-      setActionMessage(`Opening Claude Code for ${project.name}...`);
-      await openClaudeForPath(project.path, project.name);
-      setActionMessage('Claude Code session opened in Terminal!');
+      setActionMessage(`Copying path for ${project.name}...`);
+      await copyToClipboard(project.path);
+      setActionMessage('Path copied! Open your terminal and run: cd <paste> && claude');
     } else if (action === 'stop') {
       setActionMessage(`Stopping ${project.name}...`);
       const stopped = stopRunningPrototype(project.pid);
@@ -240,7 +240,7 @@ export const HomeCommand: React.FC<HomeProps> = ({ onCreateNew }) => {
   if (phase === 'actions' && selectedProject) {
     const actionItems = [
       { label: `Launch dev server`, value: 'launch' as Action },
-      { label: `Open Claude Code`, value: 'claude' as Action },
+      { label: `Copy path to clipboard`, value: 'claude' as Action },
       { label: `Open in VS Code`, value: 'vscode' as Action },
       { label: `← Back to list`, value: 'back' as Action },
     ];
@@ -305,7 +305,7 @@ export const HomeCommand: React.FC<HomeProps> = ({ onCreateNew }) => {
       {/* Header */}
       <Box flexDirection="column" marginBottom={1}>
         <Box>
-          <Text color={CAL_ORANGE} bold>{'(•ᴗ•)'}</Text>
+          <Box><CalFace color={CAL_ORANGE} /></Box>
           <Text color={CAL_TEAL} bold> calbot</Text>
           <Text dimColor> — prototype control room</Text>
         </Box>
@@ -372,7 +372,7 @@ export const HomeCommand: React.FC<HomeProps> = ({ onCreateNew }) => {
                 <Box marginLeft={2} flexDirection="row" gap={2}>
                   {editEntry && (
                     <Text color={isEntrySelected(editEntry) ? CAL_ORANGE : 'white'}>
-                      {renderCursor(editEntry)} Edit with Claude
+                      {renderCursor(editEntry)} Copy path
                     </Text>
                   )}
                   {stopEntry && (
@@ -484,15 +484,6 @@ function buildRunnerEnv(project: Project, port: number): Record<string, string> 
   };
 }
 
-async function openClaudeForPath(projectPath: string, _projectName: string) {
-  await runCommand('open', ['-a', 'Terminal', projectPath]);
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  const escapedPath = escapeForAppleScript(projectPath);
-  await runCommand('osascript', [
-    '-e', `tell application "Terminal" to do script "cd '${escapedPath}' && claude"`
-  ]);
-}
-
-function escapeForAppleScript(path: string): string {
-  return path.replace(/'/g, "'\\''");
+async function copyToClipboard(text: string) {
+  await runCommand('bash', ['-c', `echo -n "${text}" | pbcopy`]);
 }

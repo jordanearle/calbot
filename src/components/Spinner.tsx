@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, Box } from 'ink';
 import InkSpinner from 'ink-spinner';
-import { CAL_TEAL, CAL_ORANGE, getRandomMessage } from './Cal.js';
+import { CAL_TEAL, CAL_ORANGE, CalFace, getRandomMessage } from './Cal.js';
 
 interface SpinnerProps {
   message?: string;
@@ -21,9 +21,11 @@ export const Spinner: React.FC<SpinnerProps> = ({
         <Text> {message}</Text>
       </Box>
       {showCalMessage && (
-        <Text color={CAL_ORANGE} dimColor>
-          {"  "}(•.•) cal{'>'} {getRandomMessage('loading')}
-        </Text>
+        <Box>
+          <Text dimColor>{"  "}</Text>
+          <CalFace beak="." color={CAL_ORANGE} />
+          <Text color={CAL_ORANGE} dimColor> cal{'>'} {getRandomMessage('loading')}</Text>
+        </Box>
       )}
     </Box>
   );

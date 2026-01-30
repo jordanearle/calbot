@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, Box, Newline, useApp } from 'ink';
 import SelectInput from 'ink-select-input';
 import { Intro } from '../components/Intro.js';
-import { Cal, CAL_TEAL, CAL_ORANGE, getRandomMessage } from '../components/Cal.js';
+import { Cal, CalFace, CAL_TEAL, CAL_ORANGE, getRandomMessage } from '../components/Cal.js';
 import { LoadingExperience, Celebration } from '../components/LoadingExperience.js';
 import { runCommand, getCalbotDir, findAvailablePort } from '../utils/shell.js';
 import { join } from 'path';
@@ -21,6 +21,29 @@ import packageJson from '../../package.json' with { type: 'json' };
 import { launchPrototypeServer } from '../utils/running.js';
 
 const TEMPLATE_ID = 'birdie';
+
+const CONTEXT_MD = `# Prototype Context
+
+## Product Area
+_What part of the product does this prototype explore?_
+
+
+## Primary Users
+_Who is the target audience for this feature?_
+
+
+## Core Job
+_What job-to-be-done does this solve for users?_
+
+
+## Constraints
+_Technical, design, or business constraints to keep in mind_
+
+
+## Risks
+_What could go wrong? What assumptions need validation?_
+
+`;
 
 const CLAUDE_MD = `# Calbot Prototype
 
@@ -276,6 +299,7 @@ export const NewCommand: React.FC<NewCommandProps> = ({ projectName, verbose }) 
         calbotStatePath = join(calbotMetaDir, 'state.json');
         calbotLogPath = join(calbotMetaDir, 'log.txt');
         writeFileSync(join(projPath, 'CLAUDE.md'), CLAUDE_MD);
+        writeFileSync(join(projPath, 'context.md'), CONTEXT_MD);
         const notesPath = join(calbotMetaDir, 'notes.md');
         if (!existsSync(notesPath)) {
           writeFileSync(notesPath, '');
@@ -503,7 +527,8 @@ export const NewCommand: React.FC<NewCommandProps> = ({ projectName, verbose }) 
           marginTop={1}
         >
           <Box marginBottom={1}>
-            <Text color={CAL_TEAL}>(•ᴗ•) cal{'>'} </Text>
+            <CalFace color={CAL_TEAL} />
+            <Text color={CAL_TEAL}> cal{'>'} </Text>
             <Text>Your prototype is live!</Text>
           </Box>
 
@@ -589,7 +614,8 @@ export const NewCommand: React.FC<NewCommandProps> = ({ projectName, verbose }) 
   return (
     <Box flexDirection="column" padding={1}>
       <Box marginBottom={1}>
-        <Text color="red">(•︵•) cal{'>'} </Text>
+        <CalFace beak="︵" color="red" />
+        <Text color="red"> cal{'>'} </Text>
         <Text color="red">Oops! Something went wrong</Text>
       </Box>
 

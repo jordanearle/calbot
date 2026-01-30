@@ -10,14 +10,27 @@ interface CalProps {
   type?: 'normal' | 'success' | 'warning' | 'error' | 'thinking';
 }
 
+// Cal's face with orange beak
+interface CalFaceProps {
+  beak?: string;
+  color: string;
+}
+
+export const CalFace: React.FC<CalFaceProps> = ({ beak = 'ᴗ', color }) => (
+  <>
+    <Text color={color}>(•</Text>
+    <Text color={CAL_ORANGE}>{beak}</Text>
+    <Text color={color}>•)</Text>
+  </>
+);
+
 export const Cal: React.FC<CalProps> = ({ children, type = 'normal' }) => {
-  const getEmoji = () => {
+  const getBeak = () => {
     switch (type) {
-      case 'success': return '(•ᴗ•)';
-      case 'warning': return '(•_•)';
-      case 'error': return '(•︵•)';
-      case 'thinking': return '(•.•)';
-      default: return '(•ᴗ•)';
+      case 'warning': return '_';
+      case 'error': return '︵';
+      case 'thinking': return '.';
+      default: return 'ᴗ';
     }
   };
 
@@ -32,7 +45,8 @@ export const Cal: React.FC<CalProps> = ({ children, type = 'normal' }) => {
 
   return (
     <Box>
-      <Text color={getColor()}>{getEmoji()} cal{'>'} </Text>
+      <CalFace beak={getBeak()} color={getColor()} />
+      <Text color={getColor()}> cal{'>'} </Text>
       <Text>{children}</Text>
     </Box>
   );
