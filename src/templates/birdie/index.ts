@@ -145,6 +145,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { TopNav } from "@/components/layout/TopNav";
 import { SideNav } from "@/components/layout/SideNav";
+import { Agentation } from "agentation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -170,6 +171,7 @@ export default function RootLayout({
             </main>
           </div>
         </div>
+        {process.env.NODE_ENV === "development" && <Agentation />}
       </body>
     </html>
   );

@@ -22,6 +22,20 @@ import { launchPrototypeServer } from '../utils/running.js';
 
 const TEMPLATE_ID = 'birdie';
 
+/**
+ * Converts a human-readable project name to a valid npm package name.
+ * npm names must be lowercase and can only contain URL-friendly characters.
+ */
+function toNpmSafeName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '-')           // Replace spaces with hyphens
+    .replace(/[^a-z0-9-_.]/g, '')   // Remove invalid characters
+    .replace(/^[-_.]+/, '')         // Remove leading special chars
+    .replace(/[-_.]+$/, '')         // Remove trailing special chars
+    .replace(/-+/g, '-');           // Collapse multiple hyphens
+}
+
 const CONTEXT_MD = `# Prototype Context
 
 ## Product Area
@@ -242,7 +256,8 @@ export const NewCommand: React.FC<NewCommandProps> = ({ projectName, verbose }) 
 
     const createProject = async () => {
       const calbotDir = getCalbotDir();
-      const projPath = join(calbotDir, projectName);
+      const npmSafeName = toNpmSafeName(projectName);
+      const projPath = join(calbotDir, npmSafeName);
       setProjectPath(projPath);
       const projectId = randomUUID();
       const createdAtIso = new Date().toISOString();
@@ -260,7 +275,7 @@ export const NewCommand: React.FC<NewCommandProps> = ({ projectName, verbose }) 
 
         // Check if project already exists
         if (existsSync(projPath)) {
-          throw new Error(`Project "${projectName}" already exists!`);
+          throw new Error(`Project "${projectName}" already exists at ${projPath}!`);
         }
 
         // Step 1: Create Next.js app
@@ -272,7 +287,7 @@ export const NewCommand: React.FC<NewCommandProps> = ({ projectName, verbose }) 
           [
             '--yes',
             'create-next-app@latest',
-            projectName,
+            npmSafeName,
             '--yes',
             '--typescript',
             '--tailwind',
@@ -315,7 +330,7 @@ export const NewCommand: React.FC<NewCommandProps> = ({ projectName, verbose }) 
 
         await runCommand(
           'npm',
-          ['install', 'class-variance-authority', 'clsx', 'tailwind-merge', 'lucide-react', '@radix-ui/react-slot'],
+          ['install', 'class-variance-authority', 'clsx', 'tailwind-merge', 'lucide-react', '@radix-ui/react-slot', 'agentation'],
           { cwd: projPath }
         );
 
