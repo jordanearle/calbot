@@ -104,18 +104,20 @@ export function getProjects(): Array<{ name: string; path: string; createdAt: Da
 
   const entries = readdirSync(calbotDir, { withFileTypes: true });
 
-  return entries
-    .filter((entry: any) => entry.isDirectory() && !entry.name.startsWith('.'))
-    .map((entry: any) => {
+  const projects: Array<{ name: string; path: string; createdAt: Date }> = [];
+
+  for (const entry of entries) {
+    if (!entry.isDirectory() || entry.name.startsWith('.')) continue;
+    try {
       const projectPath = join(calbotDir, entry.name);
       const stats = statSync(projectPath);
-      return {
-        name: entry.name,
-        path: projectPath,
-        createdAt: stats.birthtime,
-      };
-    })
-    .sort((a: any, b: any) => b.createdAt.getTime() - a.createdAt.getTime());
+      projects.push({ name: entry.name, path: projectPath, createdAt: stats.birthtime });
+    } catch {
+      // Skip unreadable entries rather than crashing the whole scan
+    }
+  }
+
+  return projects.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
 export function developerDirExists(): boolean {

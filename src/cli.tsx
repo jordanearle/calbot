@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { WizardCommand } from './commands/wizard.js';
 import { NewCommand } from './commands/new.js';
 import { HomeCommand } from './commands/home.js';
+import { dashboardCommand } from './commands/dashboard.js';
 import { Intro } from './components/Intro.js';
 import { setVerbose } from './utils/shell.js';
 import { Cal, CalFace, CAL_ORANGE, CAL_TEAL } from './components/Cal.js';
@@ -128,6 +129,22 @@ program
   .action(async () => {
     const { waitUntilExit } = render(<Intro message="Ready to build something amazing?" />);
     await waitUntilExit();
+  });
+
+program
+  .command('dashboard')
+  .description('Open the web dashboard for managing prototypes')
+  .option('-p, --port <number>', 'Port to run the dashboard on', '4321')
+  .action(async (options: { port?: string }) => {
+    await dashboardCommand(parseInt(options.port ?? '4321', 10));
+  });
+
+program
+  .command('update')
+  .description('Update calbot to the latest version')
+  .action(async () => {
+    const { updateCommand } = await import('./commands/update.js');
+    await updateCommand();
   });
 
 program.parse();
