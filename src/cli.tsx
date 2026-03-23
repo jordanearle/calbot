@@ -163,4 +163,40 @@ program
     await updateCommand();
   });
 
+program
+  .command('help', { isDefault: false })
+  .description('Show help')
+  .action(() => {
+    const TEAL   = '\x1b[38;2;84;187;183m';
+    const ORANGE = '\x1b[38;2;241;152;0m';
+    const BOLD   = '\x1b[1m';
+    const DIM    = '\x1b[2m';
+    const NC     = '\x1b[0m';
+
+    const commands = [
+      ['calbot',              'Open the dashboard (default)'],
+      ['calbot new <name>',   'Create a new prototype'],
+      ['calbot tui',          'Open the terminal UI'],
+      ['calbot status',       'Show dashboard + prototype status'],
+      ['calbot update',       'Update calbot to the latest version'],
+      ['calbot wizard',       'Re-run the environment setup'],
+      ['calbot hello',        'Say hello to Cal'],
+    ];
+
+    const colWidth = Math.max(...commands.map(([cmd]) => cmd.length)) + 4;
+
+    console.log();
+    console.log(`  ${TEAL}(•${ORANGE}ᴗ${TEAL}•)${NC} ${BOLD}calbot${NC} v1.2.0 — Birdie's friendly prototyping assistant`);
+    console.log();
+
+    for (const [cmd, desc] of commands) {
+      const pad = ' '.repeat(colWidth - cmd.length);
+      console.log(`  ${TEAL}${cmd}${NC}${pad}${DIM}${desc}${NC}`);
+    }
+
+    console.log();
+    console.log(`  ${DIM}Prototypes live in ~/Developer  •  Dashboard runs at http://localhost:4321${NC}`);
+    console.log();
+  });
+
 program.parse();
