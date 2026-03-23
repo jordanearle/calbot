@@ -124,11 +124,11 @@ async function createProjectHeadless(name: string, description?: string): Promis
       mkdirSync(calbotDir, { recursive: true });
     }
 
-    // Step 1: Create Next.js app
+    // Step 1: Create Next.js app (pinned to tested version — do not change to @latest)
     const createResult = await runCommand(
       'npx',
       [
-        '--yes', 'create-next-app@latest', name,
+        '--yes', 'create-next-app@16.2.1', name,
         '--yes', '--typescript', '--tailwind', '--eslint',
         '--app', '--src-dir', '--import-alias', '@/*',
         '--use-npm', '--no-turbopack',
@@ -162,7 +162,7 @@ async function createProjectHeadless(name: string, description?: string): Promis
     );
     await runCommand(
       'npx',
-      ['--yes', 'shadcn@latest', 'add', 'button', 'card', 'input', 'avatar', '-y', '--overwrite'],
+      ['--yes', 'shadcn@4.1.0', 'add', 'button', 'card', 'input', 'avatar', '-y', '--overwrite'],
       { cwd: projPath }
     );
 

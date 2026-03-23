@@ -5,6 +5,7 @@ export function getDashboardHtml(): string {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>calbot</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐦</text></svg>">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -572,8 +573,8 @@ export function getDashboardHtml(): string {
   function buildRow(p) {
     var n = esc(p.name);
     var nameCell = p.running && p.port
-      ? '<div class="cell-name"><a class="name-link" href="http://localhost:' + p.port + '" target="_blank" rel="noopener">' + n + '</a>' + SVG.extLink + '</div>'
-      : '<div class="cell-name"><span class="name-text">' + n + '</span></div>';
+      ? '<div class="cell-name"><a class="name-link" href="http://localhost:' + p.port + '" target="_blank" rel="noopener" title="' + n + '">' + n + '</a>' + SVG.extLink + '</div>'
+      : '<div class="cell-name"><span class="name-text" title="' + n + '">' + n + '</span></div>';
 
     var badge = p.creating
       ? '<span class="badge badge-creating"><span class="spinner" style="width:9px;height:9px;border-color:rgba(133,77,14,0.2);border-top-color:#854d0e"></span>&nbsp;Creating</span>'
@@ -601,6 +602,8 @@ export function getDashboardHtml(): string {
     appState.projects.forEach(function(p) { all.push(p); });
 
     document.getElementById('page-count').textContent = all.length + ' prototype' + (all.length === 1 ? '' : 's');
+    var runningCount = appState.projects.filter(function(p) { return p.running; }).length;
+    document.title = runningCount > 0 ? '(' + runningCount + ' running) calbot' : 'calbot';
 
     var tbody = document.getElementById('table-body');
     if (all.length === 0) {

@@ -1,6 +1,6 @@
 {
   "name": "calbot",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Cal's friendly prototyping assistant for Birdie",
   "type": "module",
   "bin": {

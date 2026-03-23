@@ -96,9 +96,17 @@ const program = new Command();
 program
   .name('calbot')
   .description("(•ᴗ•) Cal's friendly prototyping assistant for Birdie")
-  .version('1.0.0')
+  .version('1.2.0')
   .action(async () => {
-    // Default action - show home screen with project list
+    // Default action - open the dashboard
+    const { dashboardCommand } = await import('./commands/dashboard.js');
+    await dashboardCommand(4321);
+  });
+
+program
+  .command('tui')
+  .description('Open the terminal UI')
+  .action(async () => {
     const instance = render(<App />);
     await instance.waitUntilExit();
   });
@@ -137,6 +145,14 @@ program
   .option('-p, --port <number>', 'Port to run the dashboard on', '4321')
   .action(async (options: { port?: string }) => {
     await dashboardCommand(parseInt(options.port ?? '4321', 10));
+  });
+
+program
+  .command('status')
+  .description('Show dashboard and prototype status')
+  .action(async () => {
+    const { statusCommand } = await import('./commands/status.js');
+    await statusCommand();
   });
 
 program
