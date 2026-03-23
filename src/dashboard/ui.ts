@@ -248,6 +248,10 @@ export function getDashboardHtml(): string {
     .form-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(84,187,183,0.15); }
     .form-input::placeholder { color: #a0aab8; }
     .form-hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+    .form-preview { font-size: 12px; color: var(--teal); margin-top: 6px; display: none; font-family: ui-monospace, monospace; }
+    .form-preview.visible { display: block; }
+    .form-preview-warn { color: #dc2626; font-family: inherit; font-size: 12px; margin-top: 6px; display: none; }
+    .form-preview-warn.visible { display: block; }
     .form-error { font-size: 12px; color: #dc2626; margin-top: 6px; display: none; }
     .form-error.visible { display: block; }
 
@@ -372,10 +376,57 @@ export function getDashboardHtml(): string {
     greetings: [
       "Hey there, friend! Ready to build something cool?",
       "Oh hello! What are we shipping today?",
-      "Chirp chirp! Let's make something awesome!",
+      "Chirp chirp! Let\u2019s make something awesome!",
       "Welcome back! The nest is looking good.",
-      "*happy bird noises* — let's get building!",
+      "*happy bird noises* \u2014 let\u2019s get building!",
       "Good to see you! Got some great prototypes ready.",
+      "Ooh, a visitor! Let\u2019s build something people will love.",
+      "Right then, let\u2019s make something brilliant.",
+      "Back again! I\u2019ve kept everything warm for you.",
+      "Hello hello! Ready to turn ideas into pixels?",
+      "*flaps wings excitedly* You\u2019re here!",
+      "Prototype o\u2019clock. Let\u2019s gooo.",
+      "Another day, another banger prototype incoming.",
+      "The gang\u2019s all here. Well, just us. But still!",
+      "I\u2019ve been practicing my design feedback while you were gone.",
+      "You know what time it is? Shipping time.",
+    ],
+    morning: [
+      "Good morning! Coffee in hand? Let\u2019s build.",
+      "Early bird gets the prototype shipped! \uD83C\uDF05",
+      "Morning! Best ideas happen before lunch, let\u2019s capture them.",
+      "Rise and prototype! The day is young.",
+      "Good morning! I\u2019ve been here all night. Just kidding. Maybe.",
+    ],
+    afternoon: [
+      "Good afternoon! Prime prototyping hours right now.",
+      "Post-lunch energy \u2014 let\u2019s use it wisely.",
+      "Afternoon! Nothing beats building something real.",
+      "The afternoon slump is a myth. Build something instead.",
+    ],
+    evening: [
+      "Evening session! Some of the best work happens now.",
+      "The office is quiet. Perfect for shipping something cool.",
+      "Evening! The best ideas always come after 5pm.",
+      "*lights lamp* Let\u2019s build something by nightfall.",
+    ],
+    latenight: [
+      "Burning the midnight oil? *respects the dedication*",
+      "Still here? Legendary. Let\u2019s make it worth it.",
+      "Late night builds hit different. Let\u2019s go.",
+      "The secret to great prototypes: build them when everyone else is asleep.",
+      "Night owl mode: activated. What are we building?",
+    ],
+    monday: [
+      "Monday! Turn those meeting ideas into something real.",
+      "New week, new prototype. Let\u2019s make it count.",
+      "Monday energy! The best antidote is shipping something.",
+    ],
+    friday: [
+      "Friday! Ship something before the weekend. I believe in you.",
+      "TGIF \u2014 The Greatness Is Forthcoming (in prototype form).",
+      "Friday build! Weekend bragging rights await.",
+      "End the week with a banger. You\u2019ve got this.",
     ],
     loading: [
       "Gathering twigs for your nest...",
@@ -384,28 +435,93 @@ export function getDashboardHtml(): string {
       "Fetching the good stuff...",
       "Building your nest, one twig at a time...",
       "Almost there, just preening my feathers...",
+      "npm is doing its thing... *taps foot*",
+      "Installing the good stuff \u2014 this is the exciting part!",
+      "Wiring up all the components...",
+      "Making it go fast...",
+      "Teaching it the Birdie way...",
+      "*intense concentration noises*",
     ],
     success: [
       "Nailed it! *happy dance*",
       "We did it! Time for a victory chirp!",
-      "Boom! That's what I'm talking about!",
+      "Boom! That\u2019s what I\u2019m talking about!",
       "Success! *does little wing flap*",
+      "LETS GOOOO! \uD83C\uDF89",
+      "Look at you, shipping things!",
+      "Another one for the nest!",
+      "Clean. Crisp. Delivered. *chef\u2019s kiss*",
+      "That\u2019s a wrap! Or rather, a launch.",
+      "*victory screech* (it\u2019s a bird thing)",
     ],
     waiting: [
       "Good things come to those who wait...",
       "Patience, young padawan...",
       "Building your nest, one twig at a time...",
       "The best prototypes take a little time...",
+      "Worth the wait, I promise.",
+      "This is the part where we trust the process.",
+      "npm install is basically meditation at this point.",
+    ],
+    duplicate: [
+      "Cloning the DNA...",
+      "Forking the nest!",
+      "Making a twin...",
+      "Copy... paste... but make it elegant.",
+    ],
+    delete: [
+      "Back to the void it goes.",
+      "Tidying the nest.",
+      "Gone but not forgotten.",
     ],
   };
 
+  // ── Rare messages (1 in 15 chance on load) ───────────────────────────
+  var CAL_RARE = [
+    "psst\u2026 did you know you can duplicate prototypes? \uD83E\uDD2B",
+    "fun fact: cal stands for nothing. it\u2019s just a name. or is it?",
+    "I once calculated the perfect border-radius. It\u2019s 6px.",
+    "between us: I think in components.",
+    "I\u2019ve read every shadcn doc. Twice.",
+    "no thoughts, just tailwind classes.",
+    "*quietly judges your colour choices* just kidding. mostly.",
+    "the best prototype is the one you actually ship.",
+    "have you tried turning it off and on again? (the prototype, not me)",
+  ];
+
   function randMsg(category) {
     var msgs = CAL_MESSAGES[category];
+    if (!msgs || !msgs.length) return '';
     return msgs[Math.floor(Math.random() * msgs.length)];
   }
 
+  // Time + day aware greeting
+  function getGreeting() {
+    if (Math.random() < 0.07) return CAL_RARE[Math.floor(Math.random() * CAL_RARE.length)];
+    var h = new Date().getHours();
+    var d = new Date().getDay();
+    if (d === 1) return randMsg('monday');
+    if (d === 5) return randMsg('friday');
+    if (h >= 0  && h < 5)  return randMsg('latenight');
+    if (h >= 5  && h < 12) return randMsg('morning');
+    if (h >= 12 && h < 17) return randMsg('afternoon');
+    if (h >= 17 && h < 21) return randMsg('evening');
+    return randMsg('latenight');
+  }
+
   // Pick a stable greeting per session (not per render)
-  var SESSION_GREETING = randMsg('greetings');
+  var SESSION_GREETING = getGreeting();
+
+  // ── Name sanitisation (mirrors server-side toNpmSafeName) ────────────
+  function toSafeName(s) {
+    return s
+      .toLowerCase()
+      .replace(/\\s+/g, '-')
+      .replace(/[^a-z0-9-_.]/g, '')
+      .replace(/^[-_.]+/, '')
+      .replace(/[-_.]+$/, '')
+      .replace(/-+/g, '-');
+  }
 
   // ── Helpers ───────────────────────────────────────────────────────────
   function esc(s) {
@@ -584,7 +700,33 @@ export function getDashboardHtml(): string {
     modalPhase = 1;
     renderModal();
     document.getElementById('modal-overlay').classList.add('open');
-    setTimeout(function() { var i = document.getElementById('modal-name'); if (i) i.focus(); }, 60);
+    setTimeout(function() {
+      var inp = document.getElementById('modal-name');
+      if (!inp) return;
+      inp.focus();
+      inp.addEventListener('input', function() {
+        var raw = inp.value;
+        var safe = toSafeName(raw.trim());
+        var preview = document.getElementById('modal-preview');
+        var warn = document.getElementById('modal-preview-warn');
+        if (!preview || !warn) return;
+        if (!raw.trim()) {
+          preview.classList.remove('visible');
+          warn.classList.remove('visible');
+        } else if (!safe) {
+          preview.classList.remove('visible');
+          warn.textContent = 'That name won\u2019t work \u2014 try using letters and hyphens.';
+          warn.classList.add('visible');
+        } else if (safe !== raw.trim()) {
+          preview.textContent = '\u2192 will be created as: ' + safe;
+          preview.classList.add('visible');
+          warn.classList.remove('visible');
+        } else {
+          preview.classList.remove('visible');
+          warn.classList.remove('visible');
+        }
+      });
+    }, 60);
   }
 
   function closeModal() {
@@ -608,8 +750,10 @@ export function getDashboardHtml(): string {
         '</div>' +
         '<div class="modal-body">' +
           '<label class="form-label" for="modal-name">Name</label>' +
-          '<input type="text" id="modal-name" class="form-input" placeholder="e.g. onboarding-v2" autocomplete="off" spellcheck="false" />' +
-          '<div class="form-hint">Lowercase letters, numbers, and hyphens only.</div>' +
+          '<input type="text" id="modal-name" class="form-input" placeholder="e.g. Onboarding v2" autocomplete="off" spellcheck="false" />' +
+          '<div class="form-hint">Letters, numbers, spaces \u2014 we&apos;ll handle the rest.</div>' +
+          '<div class="form-preview" id="modal-preview"></div>' +
+          '<div class="form-preview-warn" id="modal-preview-warn"></div>' +
           '<div class="form-error" id="modal-error"></div>' +
         '</div>' +
         '<div class="modal-footer">' +
@@ -645,11 +789,11 @@ export function getDashboardHtml(): string {
 
   function submitModal() {
     var inp = document.getElementById('modal-name');
-    var name = inp ? inp.value.trim() : '';
+    var name = toSafeName(inp ? inp.value.trim() : '');
     var errEl = document.getElementById('modal-error');
     if (errEl) { errEl.textContent = ''; errEl.classList.remove('visible'); }
     if (!name) {
-      if (errEl) { errEl.textContent = 'Please enter a name.'; errEl.classList.add('visible'); }
+      if (errEl) { errEl.textContent = 'Please enter a name \u2014 letters and hyphens work best.'; errEl.classList.add('visible'); }
       return;
     }
     var btn = document.getElementById('modal-submit');
@@ -762,7 +906,7 @@ export function getDashboardHtml(): string {
   }
 
   function duplicateProject(name) {
-    showToast('Duplicating ' + name + '... gathering twigs!', 2500);
+    showToast('Duplicating ' + name + '... ' + randMsg('duplicate'), 2500);
     fetch('/api/projects/' + encodeURIComponent(name) + '/duplicate', { method: 'POST' })
       .then(function(r) { return r.json(); })
       .then(function(data) {
@@ -794,7 +938,7 @@ export function getDashboardHtml(): string {
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.error) { showToast('Error: ' + data.error); return; }
-        showToast(name + ' deleted.');
+        showToast(name + ' deleted. ' + randMsg('delete'));
         fetchState();
       })
       .catch(function() { showToast('Failed to delete ' + name); });
@@ -834,6 +978,107 @@ export function getDashboardHtml(): string {
     if (e.key === 'Escape') { closeCtxMenu(); if (modalPhase === 1) closeModal(); }
     if (e.key === 'Enter' && modalPhase === 1 && document.activeElement && document.activeElement.id === 'modal-name') {
       submitModal();
+    }
+  });
+
+  // ── Easter eggs ───────────────────────────────────────────────────────
+
+  // Click the logo 5 times for a secret reaction
+  var logoClicks = 0;
+  var logoClickTimer = null;
+  var logoSecrets = [
+    "*moonwalks out of frame*",
+    "ow. that\u2019s my beak.",
+    "okay okay I\u2019ll do a trick. ...nope.",
+    "you found the secret! there is no secret. this IS the secret.",
+    "stop poking me I\u2019m trying to work",
+    "*dramatically faints*",
+    "I\u2019m not a button. I mean I am. But still.",
+    "beep boop. just kidding I\u2019m a bird.",
+    "FIVE TAPS. you have too much free time. I respect it.",
+  ];
+  document.querySelector('.nav-logo').addEventListener('click', function() {
+    logoClicks++;
+    clearTimeout(logoClickTimer);
+    logoClickTimer = setTimeout(function() { logoClicks = 0; }, 1200);
+    if (logoClicks >= 5) {
+      logoClicks = 0;
+      var msg = logoSecrets[Math.floor(Math.random() * logoSecrets.length)];
+      var el = document.getElementById('cal-greeting');
+      var prev = el.innerHTML;
+      el.style.transition = 'opacity 0.2s';
+      el.style.opacity = '0';
+      setTimeout(function() {
+        el.innerHTML = msg;
+        el.style.opacity = '1';
+        setTimeout(function() {
+          el.style.opacity = '0';
+          setTimeout(function() { el.innerHTML = prev; el.style.opacity = '1'; }, 200);
+        }, 2800);
+      }, 200);
+    }
+  });
+
+  // Konami code: ↑↑↓↓←→←→BA
+  var konamiSeq = [38,38,40,40,37,39,37,39,66,65];
+  var konamiPos = 0;
+  document.addEventListener('keydown', function(e) {
+    if (e.keyCode === konamiSeq[konamiPos]) {
+      konamiPos++;
+      if (konamiPos === konamiSeq.length) {
+        konamiPos = 0;
+        triggerPartyMode();
+      }
+    } else {
+      konamiPos = e.keyCode === konamiSeq[0] ? 1 : 0;
+    }
+  });
+
+  function triggerPartyMode() {
+    var el = document.getElementById('cal-greeting');
+    var bar = document.getElementById('cal-bar');
+    var prev = el.innerHTML;
+    var prevBg = bar.style.background;
+    var msgs = [
+      "\uD83C\uDF89 PARTY MODE ACTIVATED \uD83C\uDF89 you found the konami code!!",
+      "UP UP DOWN DOWN LEFT RIGHT LEFT RIGHT B A \u2014 you absolute legend",
+      "\uD83D\uDC26\uD83C\uDF89 cal is PARTYING \uD83C\uDF89\uD83D\uDC26",
+    ];
+    var msg = msgs[Math.floor(Math.random() * msgs.length)];
+    el.innerHTML = msg;
+    var colors = ['#54BBB7','#F19800','#006643','#15294F','#54BBB7'];
+    var ci = 0;
+    var flash = setInterval(function() {
+      bar.style.background = colors[ci % colors.length];
+      ci++;
+    }, 180);
+    setTimeout(function() {
+      clearInterval(flash);
+      bar.style.background = prevBg;
+      el.style.opacity = '0';
+      setTimeout(function() { el.innerHTML = prev; el.style.opacity = '1'; }, 200);
+    }, 3000);
+  }
+
+  // Clicking the bird in the empty state chirps at you
+  var birdClicks = 0;
+  var birdResponses = [
+    "chirp!",
+    "chirp chirp!",
+    "*ruffles feathers*",
+    "I\u2019m just a bird icon, I don\u2019t do tricks.",
+    "okay fine. chirp.",
+    "CHIRP",
+    "...chirp?",
+    "*stares at you*",
+    "you could be building a prototype right now y\u2019know",
+    "okay this is getting weird. build something.",
+  ];
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList && e.target.classList.contains('empty-bird')) {
+      var chirp = birdResponses[birdClicks % birdResponses.length];
+      birdClicks++;
+      showToast(chirp, 1800);
     }
   });
 
